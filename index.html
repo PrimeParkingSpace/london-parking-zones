@@ -28,6 +28,16 @@
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <meta name="theme-color" content="#0b1023">
+<script>
+  // Mark <html> with .in-iframe when this page is embedded so CSS can hide iframe-only controls.
+  // Runs synchronously to avoid a flash of the Home button inside the iframe.
+  try {
+    if (window.self !== window.top) document.documentElement.classList.add('in-iframe');
+  } catch (e) {
+    // Cross-origin parent throws on access — we're definitely in an iframe.
+    document.documentElement.classList.add('in-iframe');
+  }
+</script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
 <style>
@@ -101,6 +111,27 @@
     cursor:pointer; font-size:14px; box-shadow:0 4px 16px rgba(0,0,0,0.12);
   }
   .search-box button:hover { background:rgba(255,255,255,0.8); }
+  /* Home button: links back to primeparking.space — only shown when map is NOT in an iframe */
+  .home-btn {
+    position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:3;
+    padding:10px 22px;
+    background:#1941A5; color:#fff;
+    border:1px solid rgba(255,255,255,0.4); border-radius:10px;
+    font-family:inherit; font-size:13px; font-weight:600; letter-spacing:0.3px;
+    text-decoration:none; cursor:pointer; white-space:nowrap;
+    box-shadow:0 4px 16px rgba(0,0,0,0.18);
+    transition:background 0.15s, transform 0.05s;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .home-btn:hover { background:#2E91FC; }
+  .home-btn:active { transform:translateX(-50%) translateY(1px); }
+  /* On narrow screens, drop it to the bottom to avoid overlap with the search box */
+  @media (max-width: 720px) {
+    .home-btn { top:auto; bottom:10px; }
+    .home-btn:active { transform:translateX(-50%) translateY(1px); }
+  }
+  /* Hide when embedded in an iframe (class set by inline <head> script) */
+  html.in-iframe .home-btn { display:none !important; }
   .search-suggestions {
     position:absolute; top:calc(100% + 4px); left:0; right:0; z-index:3;
     background:rgba(255,255,255,0.65); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
@@ -124,6 +155,8 @@
   <button id="search-btn">🔍</button>
   <div class="search-suggestions" id="search-suggestions"></div>
 </div>
+<!-- Home button — only visible when map is loaded standalone (not in an iframe) -->
+<a class="home-btn" href="https://www.primeparking.space/" id="home-btn">PrimeParking Home</a>
 <div class="basemap-switcher" id="basemap-switcher">
   <button class="basemap-btn active" data-style="mapbox://styles/mapbox/streets-v12">Standard</button>
   <button class="basemap-btn" data-style="mapbox://styles/mapbox/satellite-streets-v12">Satellite</button>
