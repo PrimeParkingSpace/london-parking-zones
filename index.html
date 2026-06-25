@@ -125,10 +125,15 @@
   }
   .home-btn:hover { background:#2E91FC; }
   .home-btn:active { transform:translateX(-50%) translateY(1px); }
-  /* On narrow screens, drop it to the bottom to avoid overlap with the search box */
+  /* On phone-sized screens, move to bottom-right so it doesn't sit on top of the legend or search box */
   @media (max-width: 720px) {
-    .home-btn { top:auto; bottom:10px; }
-    .home-btn:active { transform:translateX(-50%) translateY(1px); }
+    .home-btn {
+      top:auto; bottom:14px;
+      left:auto; right:14px;
+      transform:none;
+      padding:9px 16px; font-size:12px;
+    }
+    .home-btn:active { transform:translateY(1px); }
   }
   /* Hide when embedded in an iframe (class set by inline <head> script) */
   html.in-iframe .home-btn { display:none !important; }
