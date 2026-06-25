@@ -157,6 +157,14 @@ let selectedZoneId = null;
 let selectedBorough = null;
 let currentPopup = null;
 
+function getZonePrice(borough) {
+  return borough === "Kensington & Chelsea" ? "£397" : "£297";
+}
+
+function priceHtml(borough) {
+  return '<div style="margin-top:8px;font-weight:700;font-size:15px;color:#0f172a">Price: ' + getZonePrice(borough) + '</div>';
+}
+
 function clearSelection() {
   selectedZoneId = null;
   selectedBorough = null;
@@ -298,6 +306,7 @@ function bindClickHandlers() {
       const popupTitle = p.zone_letter ? popupBorough + ' ' + p.zone_letter : popupBorough;
       let popHtml = '<div style="font-weight:700;font-size:16px;color:#1e293b;padding-right:14px;white-space:nowrap">' + popupTitle + '</div>';
       if (p.zone_name) popHtml += '<div style="color:#555;font-size:13px;margin-top:2px">' + p.zone_name + '</div>';
+      popHtml += priceHtml(borough);
       currentPopup = new mapboxgl.Popup({ maxWidth: "300px", closeButton: true }).setLngLat(e.lngLat).setHTML(popHtml).addTo(map);
       currentPopup.on("close", () => { if (selectedZoneId === zoneId) clearSelection(); });
     });
@@ -331,6 +340,7 @@ function bindClickHandlers() {
         const ovlPopupBorough = (BOROUGHS[borough] && BOROUGHS[borough].popupName) ? BOROUGHS[borough].popupName : borough;
         let popHtml = '<div style="font-weight:700;font-size:16px;color:#1e293b;padding-right:14px;white-space:nowrap">' + ovlPopupBorough + ' ' + mainZone.properties.zone_letter + '</div>';
         if (mainZone.properties.zone_name) popHtml += '<div style="color:#555;font-size:13px;margin-top:2px">' + mainZone.properties.zone_name + '</div>';
+        popHtml += priceHtml(borough);
         currentPopup = new mapboxgl.Popup({ maxWidth: "260px", closeButton: true }).setLngLat(e.lngLat).setHTML(popHtml).addTo(map);
         currentPopup.on("close", () => { if (selectedZoneId === zoneId) clearSelection(); });
       });
@@ -442,6 +452,7 @@ function doSearch() {
       const title = p.zone_letter ? popupBorough + ' ' + p.zone_letter : popupBorough;
       popHtml += '<div style="font-weight:700;font-size:16px;color:#1e293b">' + title + '</div>';
       if (p.zone_name) popHtml += '<div style="color:#555;font-size:13px;margin-top:2px">' + p.zone_name + '</div>';
+      popHtml += priceHtml(borough);
     } else {
       popHtml += '<div style="font-weight:600;font-size:14px;color:#888">Not in a parking zone</div>';
     }
