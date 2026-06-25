@@ -125,11 +125,12 @@
   }
   .home-btn:hover { background:#2E91FC; }
   .home-btn:active { transform:translateX(-50%) translateY(1px); }
-  /* On phone-sized screens, move to bottom-right so it doesn't sit on top of the legend or search box */
+  /* On phone-sized screens, move to bottom-right aligned with the legend bottom edge and the
+     top-right nav controls' right edge (both sit at 10px from the viewport). */
   @media (max-width: 720px) {
     .home-btn {
-      top:auto; bottom:14px;
-      left:auto; right:14px;
+      top:auto; bottom:10px;
+      left:auto; right:10px;
       transform:none;
       padding:9px 16px; font-size:12px;
     }
