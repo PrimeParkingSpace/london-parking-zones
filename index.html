@@ -142,6 +142,37 @@ const BOROUGH_LABELS = [{"name": "Hackney", "lon": -0.063313, "lat": 51.552274},
 
 const BOROUGHS = {"Westminster": {"hue": 0, "short": "WE", "popupName": "Westminster"}, "Camden": {"hue": 220, "short": "CA", "popupName": "Camden"}, "Islington": {"hue": 35, "short": "IS", "popupName": "Islington"}, "Hackney": {"hue": 280, "short": "HA", "popupName": "Hackney"}, "Tower Hamlets": {"hue": 200, "short": "TH", "popupName": "Tower Hamlets"}, "Lambeth": {"hue": 270, "short": "LA", "popupName": "Lambeth"}, "Southwark": {"hue": 100, "short": "SW", "popupName": "Southwark"}, "Wandsworth": {"hue": 50, "short": "WA", "popupName": "Wandsworth"}, "Kensington & Chelsea": {"hue": 160, "short": "KC", "popupName": "RBKC"}, "Hammersmith & Fulham": {"hue": 330, "short": "HF", "popupName": "H&F"}};
 
+const DEFAULT_BUY_URL = "https://www.primeparking.space/offers/FRuVAGXr";
+const BUY_LINKS = {
+  "WE-A": "https://www.primeparking.space/offers/F66ytLCx/checkout",
+  "WE-B": "https://www.primeparking.space/offers/db7o6Aot/checkout",
+  "WE-C": "https://www.primeparking.space/offers/AxfGNePE/checkout",
+  "WE-D": "https://www.primeparking.space/offers/yo8D2433/checkout",
+  "WE-E": "https://www.primeparking.space/offers/KDmJvoFg/checkout",
+  "WE-F": "https://www.primeparking.space/offers/f2uqYmLu/checkout",
+  "WE-G": "https://www.primeparking.space/offers/pAfg6EDf/checkout",
+  "CA-B": "https://www.primeparking.space/offers/FFQHrz68/checkout",
+  "CA-C": "https://www.primeparking.space/offers/UFLFBS4B/checkout",
+  "CA-D": "https://www.primeparking.space/offers/caBrBT25/checkout",
+  "CA-E": "https://www.primeparking.space/offers/j5n6f4W7/checkout",
+  "CA-F": "https://www.primeparking.space/offers/xNLf2Psh/checkout",
+  "CA-G": "https://www.primeparking.space/offers/55zQwsHm/checkout",
+  "CA-H": "https://www.primeparking.space/offers/iea8pFPE/checkout",
+  "CA-J": "https://www.primeparking.space/offers/C95Mcjpr/checkout",
+  "CA-N": "https://www.primeparking.space/offers/TqpSh2ZS/checkout",
+  "CA-K": "https://www.primeparking.space/offers/SFz5HFfS/checkout",
+  "CA-M": "https://www.primeparking.space/offers/Yjcrm8oG/checkout",
+  "CA-L": "https://www.primeparking.space/offers/YLkbYcpg/checkout",
+  "CA-U": "https://www.primeparking.space/offers/phdkA3FG/checkout",
+  "CA-V": "https://www.primeparking.space/offers/aJ8ge3Ex/checkout",
+  "CA-S": "https://www.primeparking.space/offers/JoEvyAmK/checkout",
+  "CA-P": "https://www.primeparking.space/offers/DpWtNQKF/checkout",
+  "CA-R": "https://www.primeparking.space/offers/8ofLhN67/checkout",
+  "CA-Q": "https://www.primeparking.space/offers/TLK4wToa/checkout",
+  "CA-X": "https://www.primeparking.space/offers/kt9AioP6/checkout",
+  "RBKC": "https://www.primeparking.space/offers/2U4jPzEg/checkout"
+};
+
 mapboxgl.accessToken = window.MAPBOX_TOKEN;
 
 const map = new mapboxgl.Map({
@@ -163,6 +194,15 @@ function getZonePrice(borough) {
 
 function priceHtml(borough) {
   return '<div style="margin-top:8px;font-weight:700;font-size:15px;color:#0f172a">Price: ' + getZonePrice(borough) + '</div>';
+}
+
+function getBuyUrl(zoneLabel) {
+  return BUY_LINKS[zoneLabel] || DEFAULT_BUY_URL;
+}
+
+function buyButtonHtml(zoneLabel) {
+  const url = getBuyUrl(zoneLabel);
+  return '<a href="' + url + '" target="_blank" rel="noopener" style="display:block;margin-top:10px;padding:10px 14px;border-radius:8px;background:#1941A5;color:#ffffff;text-decoration:none;text-align:center;font-weight:700;font-size:14px;line-height:1.2">Buy Now</a>';
 }
 
 function clearSelection() {
@@ -307,6 +347,7 @@ function bindClickHandlers() {
       let popHtml = '<div style="font-weight:700;font-size:16px;color:#1e293b;padding-right:14px;white-space:nowrap">' + popupTitle + '</div>';
       if (p.zone_name) popHtml += '<div style="color:#555;font-size:13px;margin-top:2px">' + p.zone_name + '</div>';
       popHtml += priceHtml(borough);
+      popHtml += buyButtonHtml(p.zone_label);
       currentPopup = new mapboxgl.Popup({ maxWidth: "300px", closeButton: true }).setLngLat(e.lngLat).setHTML(popHtml).addTo(map);
       currentPopup.on("close", () => { if (selectedZoneId === zoneId) clearSelection(); });
     });
@@ -341,6 +382,7 @@ function bindClickHandlers() {
         let popHtml = '<div style="font-weight:700;font-size:16px;color:#1e293b;padding-right:14px;white-space:nowrap">' + ovlPopupBorough + ' ' + mainZone.properties.zone_letter + '</div>';
         if (mainZone.properties.zone_name) popHtml += '<div style="color:#555;font-size:13px;margin-top:2px">' + mainZone.properties.zone_name + '</div>';
         popHtml += priceHtml(borough);
+        popHtml += buyButtonHtml(mainZone.properties.zone_label);
         currentPopup = new mapboxgl.Popup({ maxWidth: "260px", closeButton: true }).setLngLat(e.lngLat).setHTML(popHtml).addTo(map);
         currentPopup.on("close", () => { if (selectedZoneId === zoneId) clearSelection(); });
       });
@@ -453,6 +495,7 @@ function doSearch() {
       popHtml += '<div style="font-weight:700;font-size:16px;color:#1e293b">' + title + '</div>';
       if (p.zone_name) popHtml += '<div style="color:#555;font-size:13px;margin-top:2px">' + p.zone_name + '</div>';
       popHtml += priceHtml(borough);
+      popHtml += buyButtonHtml(p.zone_label);
     } else {
       popHtml += '<div style="font-weight:600;font-size:14px;color:#888">Not in a parking zone</div>';
     }
